@@ -11,10 +11,11 @@
 <body class="flex flex-col items-center gap-12 bg-slate-900">
 
     <!-- Header -->
-    <h1 class="text-3xl md:text-4xl font-bold font-sans mt-36 text-white">Registration Form</h1>
+    <h1 class="text-3xl md:text-4xl font-bold font-sans mt-32 text-yellow-100">Registration Form</h1>
 
     <!-- Form -->
-    <form class=" min-w-80 md:min-w-md lg:min-w-lg mx-auto mt-3 rounded-3xl px-6 py-8 md:px-8 md:py-10 bg-white"
+    <form
+        class=" min-w-80 md:min-w-md lg:min-w-lg mx-auto mt-3 rounded-3xl px-6 py-8 md:px-8 md:py-10 bg-white shadow-lg shadow-white/30 "
         id="form">
 
         <!-- Name field -->
@@ -43,11 +44,19 @@
             <input
                 class="bg-white rounded-lg border border-gray-400 focus:outline focus:outline-indigo-300 focus:border text-heading text-lg rounded-base block w-full px-2 py-1.5 md:px-2.5 md:py-2 shadow-xs placeholder:text-body"
                 type="password" id="pwdInput" minlength="6" placeholder="Password">
-
             <div id="progressContainer" class="hidden w-full bg-gray-500 rounded-full h-1 mt-3">
                 <div id="progress" class="bg-red-500 h-1 rounded-full" style="width: 0%"></div>
             </div>
-
+        </div>
+        <br>
+        <!-- Confirm Password -->
+        <div>
+            <label class="block mb-2.5 text-lg md:text-xl font-medium text-heading text-slate-900"
+                for="confirmPwd">Confirm Password
+            </label>
+            <input
+                class="bg-white rounded-lg border border-gray-400 focus:outline focus:outline-indigo-300 focus:border text-heading text-lg rounded-base block w-full px-2 py-1.5 md:px-2.5 md:py-2 shadow-xs placeholder:text-body"
+                type="password" id="confirmPwd" minlength="6" placeholder="Password">
         </div>
         <br>
 
@@ -68,6 +77,7 @@
         const name = document.getElementById("name");
         const email = document.getElementById("email");
         const pwdInput = document.getElementById("pwdInput");
+        const confirmPwd = document.getElementById("confirmPwd")
         const submit = document.getElementById("submit");
         const error = document.getElementById("error");
         const reset = document.getElementById("reset");
@@ -75,7 +85,7 @@
         const progress = document.getElementById("progress");
         var emailValid = false;
         var pwdValid = false;
-        var progressValue = 0;
+        var confirmPwdValid = false;
 
         email.addEventListener("input", function () {
 
@@ -138,7 +148,7 @@
         })
 
         pwdInput.addEventListener("input", function () {
-            var progressValue = 0;
+            let progressValue = 0;
             progressValue = pwdInput.value.length;
             progressPercentage = (progressValue / 6 * 100);
             if (progressValue > 0 && progressValue <= 6) {
@@ -167,15 +177,34 @@
                 enableSubmit();
                 pwdValid = true;
             }
-
         })
+
+        confirmPwd.addEventListener("input", function () {
+            if (confirmPwd.value === "") {
+                error.textContent = "";
+                confirmPwdValid = false;
+            }
+            else if (confirmPwd.value !== pwdInput.value) {
+                error.textContent = "Your password doesn't match.";
+                confirmPwdValid = false;
+            }
+            else if(pwdInput.value.length < pwdInput.value.length){
+                error.textContent = "Your password doesn't match.";
+                confirmPwdValid = false;
+            }
+            else {
+                error.textContent = "";
+                confirmPwdValid = true;
+                enableSubmit();
+            }
+        });
 
         form.addEventListener("reset", function (event) {
             error.textContent = "";
         })
 
         function enableSubmit() {
-            if (emailValid && pwdValid) {
+            if (emailValid && pwdValid && confirmPwdValid) {
                 submit.disabled = false;
             }
             else {
