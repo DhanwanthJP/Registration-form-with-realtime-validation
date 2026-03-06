@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link href="./src/output.css" rel="stylesheet">
+</head>
+
+<body class="flex flex-col items-center gap-12 bg-slate-900">
+
+    <!-- Header -->
+    <h1 class="text-3xl md:text-4xl font-bold font-sans mt-36 text-white">Registration Form</h1>
+
+    <!-- Form -->
+    <form class=" min-w-80 md:min-w-md lg:min-w-lg mx-auto mt-3 rounded-3xl px-6 py-8 md:px-8 md:py-10 bg-white"
+        id="form">
+
+        <!-- Name field -->
+        <div>
+            <label class="block mb-2.5 text-lg md:text-xl font-medium text-heading text-slate-900" for="name">Name
+            </label>
+            <input
+                class="bg-white rounded-lg border border-gray-400 focus:outline focus:outline-indigo-300 focus:border text-heading text-lg rounded-base block w-full px-2 py-1.5 md:px-2.5 md:py-2 shadow-xs placeholder:text-body"
+                type="text" id="name" placeholder="Your Name">
+        </div>
+        <br>
+        <!-- Email field -->
+        <div>
+            <label class="block mb-2.5 text-lg md:text-xl font-medium text-heading text-slate-900" for="email">Email
+            </label>
+            <input
+                class="bg-white rounded-lg border border-gray-400 focus:outline focus:outline-indigo-300 focus:border text-heading text-lg rounded-base block w-full px-2 py-1.5 md:px-2.5 md:py-2 shadow-xs placeholder:text-body"
+                type="email" id="email" placeholder="Your Email">
+        </div>
+        <br>
+        <!-- Password field -->
+        <div>
+            <label class="block mb-2.5 text-lg md:text-xl font-medium text-heading text-slate-900"
+                for="pwdInput">Password
+            </label>
+            <input
+                class="bg-white rounded-lg border border-gray-400 focus:outline focus:outline-indigo-300 focus:border text-heading text-lg rounded-base block w-full px-2 py-1.5 md:px-2.5 md:py-2 shadow-xs placeholder:text-body"
+                type="password" id="pwdInput" minlength="6" placeholder="Password">
+
+            <div id="progressContainer" class="hidden w-full bg-gray-500 rounded-full h-1 mt-3">
+                <div id="progress" class="bg-red-500 h-1 rounded-full" style="width: 0%"></div>
+            </div>
+
+        </div>
+        <br>
+
+        <!-- Reset & Submit -->
+        <div class="flex justify-center items-center gap-3">
+            <input
+                class="cursor-pointer flex w-full justify-center rounded-md bg-slate-800 px-3 py-1.5 text-lg font-semibold text-white shadow-xs hover:bg-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                type="reset" id="reset">
+            <input
+                class="cursor-pointer flex w-full justify-center rounded-md bg-slate-800 px-3 py-1.5 text-lg font-semibold text-white shadow-xs hover:bg-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-slate-600"
+                type="submit" id="submit" disabled>
+        </div>
+        <div class="mb-2.5 text-lg font-medium mt-4 text-red-700 " id="error"></div>
+    </form>
+
+    <script>
+        const form = document.getElementById("form");
+        const name = document.getElementById("name");
+        const email = document.getElementById("email");
+        const pwdInput = document.getElementById("pwdInput");
+        const submit = document.getElementById("submit");
+        const error = document.getElementById("error");
+        const reset = document.getElementById("reset");
+        const progressContainer = document.getElementById("progressContainer");
+        const progress = document.getElementById("progress");
+        var emailValid = false;
+        var pwdValid = false;
+        var progressValue = 0;
+
+        email.addEventListener("input", function () {
+
+            const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            const value = email.value.trim();
+
+            if (value === "") {
+                error.textContent = "";
+                emailValid = false;
+            }
+            else if (!emailFormat.test(value)) {
+                error.textContent = "Enter a valid email address.";
+                emailValid = false;
+            }
+            else {
+                error.textContent = "";
+                emailValid = true;
+                enableSubmit();
+            }
+            // console.log(checked);
+
+        });
+
+        name.addEventListener("input", function () {
+            if (name.value === "") {
+                error.textContent = "Your name can't be empty.";
+            }
+            else {
+                error.textContent = "";
+            }
+        })
+
+        //Checks all input fields (optional) incase submit is enabled without validation
+        form.addEventListener("submit", function (event) {
+
+            let message = [];
+            if ((name.value === "") && (email.value === "") && (pwdInput.value === "")) {
+                message.push("Kindly fill all the details.");
+                error.innerText = message;
+            }
+            else {
+                error.textContent = "";
+                if (name.value === "") {
+                    event.preventDefault();
+                    message.push("Please enter your name.");
+                }
+                if (email.value === "") {
+                    message.push("Please enter your email.");
+                }
+                if (pwdInput.value === "") {
+                    message.push("Please enter your password.");
+                }
+
+                if (message.length > 0) {
+
+                    error.innerText = message.join("\n ")
+                }
+            }
+        })
+
+        pwdInput.addEventListener("input", function () {
+            var progressValue = 0;
+            progressValue = pwdInput.value.length;
+            progressPercentage = (progressValue / 6 * 100);
+            if (progressValue > 0 && progressValue <= 6) {
+                progress.classList.remove("bg-green-500");
+                progress.classList.add("bg-red-500");
+                progressContainer.classList.remove("hidden");
+                progress.setAttribute("style", ("width: " + progressPercentage + "%"));
+                if (pwdInput.value.length === 6) {
+                    progress.classList.remove("bg-red-500");
+                    progress.classList.add("bg-green-500");
+                }
+            }
+            else if (pwdInput.value.length === 0) {
+                progressContainer.classList.add("hidden");
+            }
+            else {
+                progressContainer.classList.add("hidden");
+            }
+            // console.log(progressValue);
+            if (pwdInput.value.length < 6 && pwdInput.value !== "") {
+                error.textContent = "Your password must be minimum of 6 characters.";
+                pwdValid = false;
+            }
+            else {
+                error.textContent = "";
+                enableSubmit();
+                pwdValid = true;
+            }
+
+        })
+
+        form.addEventListener("reset", function (event) {
+            error.textContent = "";
+        })
+
+        function enableSubmit() {
+            if (emailValid && pwdValid) {
+                submit.disabled = false;
+            }
+            else {
+                submit.disabled = true;
+            }
+        }
+
+    </script>
+</body>
+
+</html>
